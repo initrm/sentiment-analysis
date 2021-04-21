@@ -1,0 +1,29 @@
+{
+  "name": "sentiment-analysis",
+  "version": "1.0.0",
+  "description": "Sentiment Analysis project thorugh a Naive-Bayes Classifier for the \"Web & Mobile Programming\" class exam.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "env-cmd -f ./config/config.env nodemon ./source/index.js -e js,html,css,hbs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/initrm/sentiment-analysis.git"
+  },
+  "author": "Andrea Tinelli",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/initrm/sentiment-analysis/issues"
+  },
+  "homepage": "https://github.com/initrm/sentiment-analysis#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bayes": "^1.0.0",
+    "env-cmd": "^10.1.0",
+    "express": "^4.17.1",
+    "express-handlebars": "^5.3.0",
+    "luxon": "^1.26.0",
+    "nodemon": "^2.0.7",
+    "validator": "^13.6.0"
+  }
+}
