@@ -3,7 +3,7 @@ const axios = require('axios');
 // Router
 const express = require('express');
 // Naive-Bayes Classifier 
-const bayes = require('bayes');
+var BayesClassifier = require('bayes-classifier');
 // File System 
 const fs = require('fs');
 // Path Creation
@@ -96,14 +96,16 @@ router.post('/api/classifier/learn', async (req, res) => {
         return res.status(400).send({ message: "One or more needed data are missing or invalid." });
 
     // Creates the bayes
-    let classifier = fs.existsSync(bayesConfigPath) ? bayes.fromJson(fs.readFileSync(bayesConfigPath)) : bayes();
+    let classifier = new BayesClassifier();
+    if(fs.existsSync(bayesConfigPath)) classifier.restore(JSON.parse(fs.readFileSync(bayesConfigPath)));
 
     // Instructs the bayes classifier with the received data
-    await classifier.learn(req.body.text, req.body.category);
+    classifier.addDocument(req.body.text, req.body.category);
+    classifier.train();
 
     // Saves the classifier state
     if(!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
-    fs.writeFileSync(bayesConfigPath, classifier.toJson(), { flag: "w" });
+    fs.writeFileSync(bayesConfigPath, JSON.stringify(classifier), { flag: "w" });
 
     // Returns the success of the operation
     return res.send({ message: "Succesfully learned." });
@@ -119,13 +121,14 @@ router.post('/api/classifier/categorize', async (req, res) => {
 
     // Creates the bayes
     if(!fs.existsSync(bayesConfigPath)) return res.status(400).send({ message: "The classifier has no data." });
-    let classifier = bayes.fromJson(fs.readFileSync(bayesConfigPath));
+    let classifier = new BayesClassifier();
+    classifier.restore(JSON.parse(fs.readFileSync(bayesConfigPath)));
 
     // Classify the text
-    let category = await classifier.categorize(req.body.text)
+    let classifications = classifier.getClassifications(req.body.text);
 
     // Returns the success of the operation
-    return res.send({ category })
+    return res.send({ classifications });
 
 })
 
