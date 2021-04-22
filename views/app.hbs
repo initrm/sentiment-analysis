@@ -26,7 +26,7 @@
                         <!-- Selected Text Card -->
                         <div id="st-selected-text-input-container" class="col-12 mb-2">
                             <h5 class="text-center">Selected Text:</h5>
-                            <textarea name="st-selected-text" id="st-selected-text-input" class="form-control" type="text" placeholder="Nothing selected, select some text inside the tweet." aria-label="readonly input example" readonly></textarea>
+                            <textarea name="st-selected-text" id="st-selected-text-input" class="form-control" placeholder="Nothing selected, select some text inside the tweet." aria-label="readonly input example" readonly></textarea>
                         </div>
 
                         <!-- Tweet Card -->
@@ -45,23 +45,23 @@
                                     <form id="st-classification-form">
 
                                         <!-- Positive Classification -->
-                                        <input type="radio" class="btn-check" value="positive" name="st-radio-classification" id="st-positive-classification-check" autocomplete="off" checked>
+                                        <input type="radio" class="btn-check" value="positive" name="st-radio-classification" id="st-positive-classification-check" checked>
                                         <label class="mb-2 btn btn-outline-primary" for="st-positive-classification-check"><i class="far fa-smile"></i> Positive</label>
                                         
                                         <!-- Negative Classification -->
-                                        <input type="radio" class="btn-check" value="negative" name="st-radio-classification" id="st-negative-classification-check" autocomplete="off">
+                                        <input type="radio" class="btn-check" value="negative" name="st-radio-classification" id="st-negative-classification-check">
                                         <label class="mb-2 btn btn-outline-primary" for="st-negative-classification-check"><i class="far fa-frown"></i> Negative</label>
 
                                         <!-- Nature Classification -->
-                                        <input type="radio" class="btn-check" value="nature" name="st-radio-classification" id="st-nature-classification-check" autocomplete="off">
+                                        <input type="radio" class="btn-check" value="nature" name="st-radio-classification" id="st-nature-classification-check">
                                         <label class="mb-2 btn btn-outline-primary" for="st-nature-classification-check"><i class="fas fa-tree"></i> Nature</label>
 
                                         <!-- Finance Classification -->
-                                        <input type="radio" class="btn-check" value="finance" name="st-radio-classification" id="st-finance-classification-check" autocomplete="off">
+                                        <input type="radio" class="btn-check" value="finance" name="st-radio-classification" id="st-finance-classification-check">
                                         <label class="mb-2 btn btn-outline-primary" for="st-finance-classification-check"><i class="fas fa-wallet"></i> Finance</label>
 
                                         <!-- Politic Classification -->
-                                        <input type="radio" class="btn-check" value="politic" name="st-radio-classification" id="st-politic-classification-check" autocomplete="off">
+                                        <input type="radio" class="btn-check" value="politic" name="st-radio-classification" id="st-politic-classification-check">
                                         <label class="mb-2 btn btn-outline-primary" for="st-politic-classification-check"><i class="fas fa-balance-scale"></i> Politic</label>
                                         
                                         <!-- Submit -->
@@ -84,7 +84,70 @@
                 </div>
 
                 <!-- Guided Training Tab -->
-                <div class="tab-pane fade" id="pills-guided-training" role="tabpanel" aria-labelledby="pills-guided-training-tab">Guided Training</div>
+                <div class="tab-pane fade" id="pills-guided-training" role="tabpanel" aria-labelledby="pills-guided-training-tab">
+                    <div class="row d-none" id="gt-row">
+
+                        <!-- Tweet Card -->
+                        <div id="gt-tweet-container" class="mb-2 col-lg-6 col-md-12"></div>
+
+                        <!-- Classification Card -->
+                        <div id="gt-classification-card-col" class="col-lg-6 mb-2 col-md-12">
+                            <div class="card h-100">
+                                <div class="card-body">
+
+                                    <!-- Card Title and Subtitle -->
+                                    <h5 class="card-title">Classification</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Check if the classifier has assigned the right category to the tweet</h6>
+
+                                    <!-- Classifier choosen category for the tweet -->
+                                    <p>Classifier think that this tweet's category is: <strong id="gt-classification-tweet-category"></strong>.</p>
+                                    <div class="mb-3 progress">
+                                        <div id="gt-classification-tweet-percentage" class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                                    </div>
+
+                                    <!-- Classification Form -->
+                                    <form id="gt-classification-form">
+
+                                        <!-- Classification confirmation buttons -->
+                                        <div class="btn-group" role="group" aria-label="Confirmation Buttons">
+
+                                            <!-- Confirm the choosen classification button -->
+                                            <button type="button" id="gt-confirm-choosen-category-button" class="btn btn-outline-success">
+                                                <i class="fas fa-check"></i> Confirm
+                                            </button>
+
+                                            <!-- Change the choose category button -->
+                                            <div class="btn-group" role="group">
+                                                <button id="gt-change-choosen-category-button" type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-sync-alt"></i> Change
+                                                </button>
+
+                                                <!-- Dropdown -->
+                                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-smile"></i> Positive</a></li>
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-frown"></i> Negative</a></li>
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-tree"></i> Nature</a></li>
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-wallet"></i> Finance</a></li>
+                                                    <li><a class="dropdown-item" href="#"><i class="fas fa-balance-scale"></i> Politic</a></li>
+                                                </ul>
+
+                                            </div>
+                                            
+                                        </div>
+
+                                    </form>
+                                                
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skip Tweet Classification Button -->
+                        <div class="col-12 mb-5 d-flex justify-content-center align-items-center">
+                            <button type="button" id="gt-skip-tweet-classification-button" class="btn btn-outline-primary"><i class="fas fa-forward"></i> Skip</button>
+                        </div>
+
+                    </div>
+                </div>
 
                 <!-- Automatic Classification Tab -->
                 <div class="tab-pane fade" id="pills-automatic-classification" role="tabpanel" aria-labelledby="pills-automatic-classification-tab">Automatic Classification</div>
