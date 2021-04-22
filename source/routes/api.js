@@ -120,7 +120,7 @@ router.post('/api/classifier/categorize', async (req, res) => {
         return res.status(400).send({ message: "One or more needed data are missing or invalid." });
 
     // Creates the bayes
-    if(!fs.existsSync(bayesConfigPath)) return res.status(400).send({ message: "The classifier has no data." });
+    if(!fs.existsSync(bayesConfigPath)) return res.status(400).send({ message: "The classifier has no data, retry when you trained the classifier a little bit." });
     let classifier = new BayesClassifier();
     classifier.restore(JSON.parse(fs.readFileSync(bayesConfigPath)));
 
