@@ -3,7 +3,7 @@ const axios = require('axios');
 // Router
 const express = require('express');
 // Naive-Bayes Classifier 
-var BayesClassifier = require('bayes-classifier');
+const BayesClassifier = require('bayes-classifier');
 // File System 
 const fs = require('fs');
 // Path Creation
@@ -55,7 +55,6 @@ router.get('/api/tweets', async (req, res) => {
                 max_results: 100
             }
         })).data.data;
-        
     }
     catch(error) {
         return res.status(503).send({ message: "Unable to retrieve latest Tweets from Twitter." });
@@ -77,11 +76,11 @@ router.get('/api/tweets', async (req, res) => {
         })).data.data;
     }
     catch(error) {
-        return res.send({ message: "Unable to retrieve latest fulll text Tweets from Twitter." })
+        return res.send({ message: "Unable to retrieve latest fulll text Tweets from Twitter." });
     }
 
-    // Ritorno i tweet ottenuti
-    return res.send(scoopedTweets)
+    // Returns the scooped tweets
+    return res.send(scoopedTweets);
 
 })
 
@@ -142,9 +141,9 @@ router.post('/api/classifier/reset', async (req, res) => {
     if(fs.existsSync(dataPath)) fs.rmdirSync(dataPath);
 
     // Returns the success of the operation
-    return res.send()
+    return res.send();
 
 })
 
-// Esporto il router contenente le api
+// Exports the router containing the api routes
 module.exports = { apiRouter: router }
