@@ -151,24 +151,6 @@ const loadNewGuidedTrainingTweet = () => {
 
     })
 
-    
-
-    
-
-    
-
-    /*
-    // Sets the interface loading
-    $('#gt-row').append(`
-        <div id="gt-loading-div" class="col-12 d-flex justify-content-center">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    `);
-
-    */
-
 }
 
 /**
