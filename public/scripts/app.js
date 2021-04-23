@@ -3,6 +3,27 @@
  */
 
 /**
+ * Sets the provided jQuery selected button disabled and shows a loading ui
+ * 
+ * @param {Object} jQueryObject 
+ */
+const setButtonInLoadingState = (jQueryObject) => {
+    jQueryObject.attr('disabled', 'true');
+    jQueryObject.html(`<span class="d-none">${jQueryObject.html()}</span><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
+}
+
+/**
+ * Sets the provided jQuery selected button enabled and restore the default content
+ * Should only be called after the setButtonInLoadingState function
+ * 
+ * @param {Object} jQueryObject 
+ */
+const setButtonInNotLoadingState = (jQueryObject) => {
+    jQueryObject.removeAttr('disabled');
+    jQueryObject.html($(jQueryObject.children('span')[0]).html());
+}
+
+/**
  * Hides the loading screen div
  */
 const hideAppLoadingScreen = () => $('#app-loading-screen').fadeOut(500, () => $('#app-loading-screen').addClass('d-none'));
@@ -13,7 +34,7 @@ const hideAppLoadingScreen = () => $('#app-loading-screen').fadeOut(500, () => $
  * @param {String} parentId 
  * @param {Object} tweet 
  */
-const displayTweet = (parentId, { id: tweetId, text, author_id, created_at }) => {
+const displayTweet = (parentId, { id: tweetId, text, author_id, created_at }, idPrefix) => {
 
     $('#' + parentId).html(`
         <div class="card h-100 text-center">
@@ -21,7 +42,7 @@ const displayTweet = (parentId, { id: tweetId, text, author_id, created_at }) =>
                 Tweet ${tweetId}
             </div>
             <div class="card-body">
-                <p id="st-tweet-text" class="card-text">${text}</a>
+                <p id="${idPrefix}-tweet-text" class="card-text">${text}</a>
             </div>
             <div class="card-footer text-muted">
                 Created at: ${luxon.DateTime.fromISO(created_at).toFormat('hh:mm:ss dd-LL-yyyy')} from user ${author_id}
@@ -38,7 +59,7 @@ const initSimpleTraining = () => {
 
     // Gets the tweet and shows it into the Simple Training tweet container
     Tweets.pickOne()
-        .then((tweet) => displayTweet('st-tweet-container', tweet))
+        .then((tweet) => displayTweet('st-tweet-container', tweet, 'st'))
         .catch((error) => toastr.error(error.message))
         .finally(() => hideAppLoadingScreen());
 
@@ -46,21 +67,20 @@ const initSimpleTraining = () => {
     $('#st-skip-tweet-classification-button').click(function(event) {
 
         // Disabling the button while it loads the next tweet
-        $(this).attr('disabled', 'true');
-        $(this).html("<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>");
+        setButtonInLoadingState($(this));
 
         // Gets the tweet
         Tweets.pickOne()
-            // Sets the tweet into the page
-            .then((tweet) => displayTweet('st-tweet-container', tweet))
+            // Sets the tweet into the page and resets the input which displays the selected text and the classification form
+            .then((tweet) => {
+                displayTweet('st-tweet-container', tweet, 'st');
+                $("textarea[name=st-selected-text]").val('');
+                $('#st-classification-form').trigger('reset');
+            })
             // Toast the error
             .catch((error) => toastr.error(error.message))
             // Reset the skip button to be usable and resets the selected text input textarea
-            .finally(() => {
-                $(this).removeAttr('disabled');
-                $(this).html("<i class=\"fas fa-forward\"></i> Skip");
-                $("textarea[name=st-selected-text]").val('');
-            });
+            .finally(() => setButtonInNotLoadingState($(this)));
 
     });
 
@@ -72,33 +92,22 @@ const initSimpleTraining = () => {
 
         // Sets the submit button on loading
         let classificationSubmitButton = $('#st-classification-form-submit-button');
-        classificationSubmitButton.attr('disabled', 'true');
-        classificationSubmitButton.html("<span class='spinner-border spinner-border-sm' role='status' aria-hidden='true'></span>");
+        setButtonInLoadingState(classificationSubmitButton);
 
-        // Sends the request to the
-        fetch('/api/classifier/learn', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: $("textarea[name=st-selected-text]").val(), category: $("input[name=st-radio-classification]:checked").val() })
-        })
-            // Computes the response
-            .then(async (response) => {
-                // Reads the response content as a JSON
-                let data = await response.json();
-                // Checks if the request has been completed without errors
-                if(response.status >= 300) return toastr.error(data.message);
-                // Notifies the user, resets the form and goes to the next tweet
-                toastr.success(data.message);
+        // Submit the new classification
+        Classifier.learn($("textarea[name=st-selected-text]").val(), $("input[name=st-radio-classification]:checked").val())
+            .then((message) => {
+
+                // Notifies the user and goes to the next tweet
+                toastr.success(message);
                 $('#st-skip-tweet-classification-button').trigger('click');
-                $(this).trigger('reset');
-            })
-            // Error Handling
-            .catch((error) => toastr.error("Unknown error."))
-            .finally(() => {
-                classificationSubmitButton.removeAttr('disabled');
-                classificationSubmitButton.html("Submit");
-            });
 
+            })
+            // Notifies the user about the error
+            .catch((error) => toastr.error(error.message))
+            // Resets the button
+            .finally(() => setButtonInNotLoadingState(classificationSubmitButton));
+            
     });
 
     // Sets the listener on text selection inside the tweet card
@@ -126,25 +135,12 @@ const loadNewGuidedTrainingTweet = () => {
         // Gets the tweet
         Tweets.pickOne().then((tweet) => {
 
-            // Gets the classification for the tweet
-            fetch('/api/classifier/categorize', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ text: tweet.text })
-            })
-            .then(async (response) => {
-
-                // Parses the response as a JSON
-                let data = await response.json();
-                // Verifies if the request has been completed succesfully
-                if(response.status >= 300) return reject(new Error(data.message));
-
-                resolve({...data, tweet });
-        
-            })
-            .catch((error) => reject(error));
+            // Gets the category for the tweet
+            Classifier.categorize(tweet.text)
+                // Returns tweet and category
+                .then((data) => resolve({...data, tweet }))
+                // Returns the error
+                .catch((error) => reject(error));
 
         })
         .catch((error) => reject(error));
@@ -158,22 +154,68 @@ const loadNewGuidedTrainingTweet = () => {
  */
 const initGuidedTraining = () => {
 
-    // Removes the click listener which is going to be resetted below
+    // Removes the click listener which is going to be resetted below since switching the tabs will althought set more click listeners
     $('#gt-skip-tweet-classification-button').off('click');
+    $('#gt-confirm-choosen-category-button').off('click');
+    $('.gt-change-choosen-category-btn-option').off('click');
+
+    // Sets the click listeners for the classification
+    $('#gt-confirm-choosen-category-button').click(function(event) {
+
+        // Sets the button in a loading state
+        setButtonInLoadingState($(this));
+        
+        // Sends the request to learn the classification because it is correct
+        Classifier.learn($('#gt-tweet-text').html(), $('#gt-classification-tweet-category').html())
+            .then((message) => {
+                
+                // Notifies the user that the operation has been completed succesfully
+                toastr.success(message);
+                // Goes to the next tweet
+                $('#gt-skip-tweet-classification-button').trigger('click');
+
+            })
+            // Notifies the user about the error
+            .catch((error) => toastr.error(error.message))
+            // Reset the button to be clickable
+            .finally(() => setButtonInNotLoadingState($(this)));
+
+    });
+    $('.gt-change-choosen-category-btn-option').click(function(event) {
+
+        // Gets the dropdown button and sets it in a loading state
+        let mainButton = $('#gt-change-choosen-category-button');
+        setButtonInLoadingState(mainButton);
+
+        // Sends the request to learn the right classification
+        Classifier.learn($('#gt-tweet-text').html(), $(this).attr('data-value'))
+            .then((message) => {
+                
+                // Notifies the user that the operation has been completed succesfully
+                toastr.success(message);
+                // Goes to the next tweet
+                $('#gt-skip-tweet-classification-button').trigger('click');
+
+            })
+            // Notifies the user about the error
+            .catch((error) => toastr.error(error.message))
+            // Reset the button to be clickable
+            .finally(() => setButtonInNotLoadingState(mainButton));
+        
+    });
 
     // Sets the skip tweet classification button functionality
     $('#gt-skip-tweet-classification-button').click(function(event) {
 
         // Sets the UI Loading
-        $(this).attr('disabled', true);
-        $(this).html("<span class=\"spinner-border spinner-border-sm\" role=\"status\" aria-hidden=\"true\"></span>");
+        setButtonInLoadingState($(this));
 
         // Loads the tweet and the classification
         loadNewGuidedTrainingTweet()
             .then(({ classifications, tweet }) => {
 
                 // Creates and insert into the dom the tweet card
-                displayTweet('gt-tweet-container', tweet);
+                displayTweet('gt-tweet-container', tweet, 'gt');
                 // Sets the classifier choosen category data
                 $('#gt-classification-tweet-category').html(classifications[0].label);
                 let percentage = $('#gt-classification-tweet-percentage');
@@ -189,10 +231,7 @@ const initGuidedTraining = () => {
             // Notifies the user of the error
             .catch((error) => toastr.error(error.message))
             // Sets the skip button to be usable
-            .finally(() => {
-                $(this).removeAttr('disabled');
-                $(this).html("<i class=\"fas fa-forward\"></i> Skip");
-            });
+            .finally(() => setButtonInNotLoadingState($(this)));
 
     });
 
