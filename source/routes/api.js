@@ -88,7 +88,7 @@ router.get('/api/tweets', async (req, res) => {
 router.post('/api/classifier/learn', async (req, res) => {
 
     // Accepted classifications
-    const acceptedClassifications = [ 'positive', 'negative', 'nature', 'finance', 'politic' ];
+    const acceptedClassifications = [ 'positive', 'negative', 'nature', 'finance', 'politic', 'film', 'art', 'sport', 'health', 'food' ];
 
     // Checks if all data have been correctly provided
     if(typeof(req.body.text) !== 'string' || req.body.text.length < 4 || typeof(req.body.category) !== 'string' || !acceptedClassifications.includes(req.body.category))
