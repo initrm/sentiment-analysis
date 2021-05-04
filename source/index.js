@@ -6,7 +6,8 @@ const hbs = require('express-handlebars');
 const path = require('path');
 
 // Routers
-const { apiRouter } = require('./routes/api')
+const { apiRouter } = require('./routes/api');
+const { appRouter } = require('./routes/app')
 
 // App Initialization
 const app = express();
@@ -23,22 +24,8 @@ app.engine('.hbs', hbs({ extname: '.hbs', layoutsDir: hbsLayoutPath }));
 app.set('view engine', '.hbs');
 
 // API Routes
-app.use(apiRouter)
-
-// Serves the index page
-app.get('/', (req, res) => res.render('index', { layout : 'base' }))
-
-// Serves the application page
-app.get('/app', (req, res) => res.render('app', { layout : 'base' }))
-
-// Serves the about page
-app.get('/about', (req, res) => res.render('about', { layout : 'base' }))
-
-// Serves the settings page
-app.get('/settings', (req, res) => res.render('settings', { layout : 'base' }))
-
-// Not Found
-app.get('*', (req, res) => res.render('404', { layout : 'base' }))
+app.use(apiRouter);
+app.use(appRouter);
 
 // Starts the server
 app.listen(process.env.PORT, () => console.log(`Server is up and running on port ${process.env.PORT}.`));
