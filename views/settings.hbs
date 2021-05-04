@@ -1,0 +1,64 @@
+<!-- Settings -->
+<div class="container">
+    <div class="row justify-content-center">
+
+        <!-- Settings page title -->
+        <div class="col-12">
+            <h1 class="text-center">Settings</h1>
+        </div>
+
+        <!-- Libraries and entities section title and subtitle -->
+        <div class="col-12">
+            <h4 class="text-center">General</h4>
+            <h6 class="text-center text-muted">Misc settings.</h6>
+        </div>
+
+        <!-- Clear Tweets Card -->
+        <div class="col-lg-8 col-md-12 m-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Clear Tweets Cache</h5>
+                    <p class="card-text">Due to some Twitter v2 api limitations and to decrease the number of api calls, the app loads 100 tweets at time and stores them into the local storage. This means that processing few tweets per day can cause that the app shows Tweets that were trending a lot of time ago. Clearing the tweets cache will force the app to load new tweets.</p>
+                    <button id="clear-tweets-cache-button" class="btn btn-outline-primary"><i class="fas fa-sync-alt"></i> Clear</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Libraries and entities section title and subtitle -->
+        <div class="col-12">
+            <h4 class="text-center">Danger</h4>
+            <h6 class="text-center text-muted">Important settings which is better to read twice before using.</h6>
+        </div>
+
+        <!-- Clear Tweets Card -->
+        <div class="col-lg-8 col-md-12 m-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Erase Classifier Memory</h5>
+                    <p class="card-text">Completely deletes what the classifier learned until now, basically, resets the app.</p>
+                    <button id="erase-classifier-memory-open-modal-button" data-bs-toggle="modal" data-bs-target="#reset-classifier-modal" class="btn btn-outline-danger"><i class="fas fa-eraser"></i> Erase</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Erase Classifier Confirmation Modal -->
+        <div class="modal fade" id="reset-classifier-modal" tabindex="-1" aria-labelledby="reset-classifier-modal-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="reset-classifier-modal-label">Confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Back</button>
+                        <button id="erase-classifier-memory-button" type="button" class="btn btn-danger">Erase</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

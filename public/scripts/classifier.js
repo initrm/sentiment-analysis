@@ -40,6 +40,7 @@ class Classifier {
 
     /**
      * Calls the api to retrieve the classifier classification of the provided text
+     * 
      * @param {String} text 
      * @returns {Promise}
      */
@@ -52,6 +53,38 @@ class Classifier {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ text })
+            })
+            // Computes the response
+            .then(async (response) => {
+
+                // Reads the response content as a JSON
+                let data = await response.json();
+                // Checks if the request has been completed without errors
+                if(response.status >= 300) return reject(new Error(data.message));
+                // Returns the data
+                resolve(data);
+                
+            })
+            // Error Handling
+            .catch((error) => reject(new Error("Unknown error.")));
+
+        })
+
+    }
+
+    /**
+     * Calls the api to reset the classifier
+     * 
+     * @returns {Promise}
+     */
+    static reset() {
+
+        return new Promise((resolve, reject) => {
+
+            // Sends the request to the api to let the classifier learn a new association
+            fetch('/api/classifier/reset', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
             })
             // Computes the response
             .then(async (response) => {
