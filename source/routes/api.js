@@ -141,7 +141,7 @@ router.post('/api/classifier/reset', async (req, res) => {
     if(fs.existsSync(dataPath)) fs.rmdirSync(dataPath);
 
     // Returns the success of the operation
-    return res.send();
+    return res.send({ message: "Successfully resetted. "});
 
 })
 
