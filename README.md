@@ -40,7 +40,7 @@ Create the config directory
 Create the config.env file
 
 ```bash
-  touch config.env
+  touch config/config.env
 ```
 
 Copy and paste the following lines into the config.env file
