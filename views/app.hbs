@@ -175,7 +175,44 @@
                 </div>
 
                 <!-- Automatic Classification Tab -->
-                <div class="tab-pane fade" id="pills-automatic-classification" role="tabpanel" aria-labelledby="pills-automatic-classification-tab">Automatic Classification</div>
+                <div class="tab-pane fade" id="pills-automatic-classification" role="tabpanel" aria-labelledby="pills-automatic-classification-tab">
+                    <div class="row d-none" id="ac-row">
+
+                        <!-- Tweet Card -->
+                        <div id="ac-tweet-container" class="mb-2 col-lg-6 col-md-12"></div>
+
+                        <!-- Classification Card -->
+                        <div id="ac-classification-card-col" class="col-lg-6 mb-2 col-md-12">
+                            <div class="card h-100">
+                                <div class="card-body">
+
+                                    <!-- Card Title and Subtitle -->
+                                    <h5 class="card-title">Classification</h5>
+                                    <h6 class="card-subtitle mb-2 text-muted">Classifier choosen category</h6>
+
+                                    <!-- Classifier choosen category for the tweet -->
+                                    <p>Classifier think that this tweet's category is: <strong id="ac-classification-tweet-category"></strong>.</p>
+
+                                    <!-- Classifier choosen category affidability score -->
+                                    <p>Affidability score: <strong id="ac-classification-affidability"></strong>%.</p>
+
+                                    <!-- All classifier classifications -->
+                                    <p>All classification scores:</p>
+                                    <div id="ac-classifications-container">
+
+                                    </div>
+                                                
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Skip Tweet Classification Button -->
+                        <div class="col-12 mb-5 d-flex justify-content-center align-items-center">
+                            <button type="button" id="ac-next-tweet-classification-button" class="btn btn-outline-primary"><i class="fas fa-forward"></i> Next</button>
+                        </div>
+
+                    </div>
+                </div>
             
             </div>
         </div>

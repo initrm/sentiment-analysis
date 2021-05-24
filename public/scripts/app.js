@@ -107,7 +107,7 @@ const initSimpleTraining = () => {
  * 
  * @returns {Promise}
  */
-const loadNewGuidedTrainingTweet = () => {
+const loadTweetAndClassification = () => {
 
     return new Promise((resolve, reject) => {
 
@@ -190,7 +190,7 @@ const initGuidedTraining = () => {
         setButtonInLoadingState($(this));
 
         // Loads the tweet and the classification
-        loadNewGuidedTrainingTweet()
+        loadTweetAndClassification()
             .then(({ classifications, tweet }) => {
 
                 // Creates and insert into the dom the tweet card
@@ -198,7 +198,7 @@ const initGuidedTraining = () => {
                 // Sets the classifier choosen category data
                 $('#gt-classification-tweet-category').html(classifications[0].label);
                 let percentage = $('#gt-classification-tweet-percentage');
-                let pValue = Math.round(classifications[0].value * 100);
+                let pValue = (classifications[0].value * 100).toFixed(2);
                 percentage.attr('style', `width: ${pValue}%`);
                 percentage.attr('aria-valuenow', pValue);
                 percentage.html(pValue + "%");
@@ -217,6 +217,65 @@ const initGuidedTraining = () => {
     // Loads the tweet data
     $('#gt-skip-tweet-classification-button').trigger('click');
 
+}
+
+/**
+ * Initializes the content of the Automatic Classification Tab
+ */
+const initAutomaticClassification = () => {
+
+    // Removes the click listener which is going to be resetted below since switching the tabs will althought set more click listeners
+    $('#ac-next-tweet-classification-button').off('click');
+
+    // Sets the next tweet automatic classification button functionality
+    $('#ac-next-tweet-classification-button').click(function(event) {
+
+        // Sets the UI Loading
+        setButtonInLoadingState($(this));
+
+        // Loads the tweet and the classification
+        loadTweetAndClassification()
+            .then(({ classifications, tweet }) => {
+
+                // Creates and insert into the dom the tweet card
+                displayTweet('ac-tweet-container', tweet, 'ac');
+                // Sets the classifier choosen category data
+                $('#ac-classification-tweet-category').html(classifications[0].label);
+                $('#ac-classification-affidability').html((classifications[0].value * 100).toFixed(2));
+
+                // Sets all the values
+                $('#ac-classifications-container').empty()
+                classifications.forEach((classification) => {
+                    let percentage = (classification.value * 100).toFixed(2)
+                    $('#ac-classifications-container').append(`
+                        <p><small>${classification.label.charAt(0).toUpperCase() + classification.label.slice(1)}</small></p>
+                        <div class="mb-3 progress">
+                            <div 
+                                id="gt-classification-tweet-percentage" 
+                                class="progress-bar"
+                                role="progressbar" 
+                                style="width: ${percentage}%;" 
+                                aria-valuenow="${percentage}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">${percentage}%</div>
+                        </div>
+                    `)
+                })
+
+                // Shows the row
+                $('#ac-row').removeClass('d-none');
+
+            })
+            // Notifies the user of the error
+            .catch((error) => toastr.error(error.message))
+            // Sets the skip button to be usable
+            .finally(() => setButtonInNotLoadingState($(this)));
+
+    });
+
+    // Classifies the next tweet
+    $('#ac-next-tweet-classification-button').trigger('click');
+    
 }
 
 /**
@@ -239,6 +298,12 @@ $(function() {
     $('#pills-guided-training-tab').click(() => {
         // Initializes the Guided Training Tab content
         initGuidedTraining();
+    })
+
+    // Sets a click listener on the Automatic Classification tab which initializes the tab content
+    $('#pills-automatic-classification-tab').click(() => {
+        // Initializes the Automatic Classification Tab content
+        initAutomaticClassification();
     })
 
 })
