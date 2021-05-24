@@ -76,7 +76,7 @@ router.get('/api/tweets', async (req, res) => {
         })).data.data;
     }
     catch(error) {
-        return res.send({ message: "Unable to retrieve latest fulll text Tweets from Twitter." });
+        return res.send({ message: "Unable to retrieve latest full text Tweets from Twitter." });
     }
 
     // Returns the scooped tweets
