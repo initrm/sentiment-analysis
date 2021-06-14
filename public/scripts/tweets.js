@@ -8,7 +8,7 @@ class Tweets {
      * 
      * @returns {Boolean}
      */
-    static #areCached = () => {
+    static areCached = () => {
 
         // Check if cache contains tweets list data
         let tweets = localStorage.getItem('tweets');
@@ -21,7 +21,12 @@ class Tweets {
             return false;
         }
         if(!tweetsArray || tweetsArray.some(({ created_at, text, author_id, id }) => {
-            return typeof(created_at) !== typeof(text) || typeof(text) !== typeof(author_id) || typeof(author_id) !== typeof(id) || typeof(id) !== 'string'
+            return (
+                typeof(created_at) !== typeof(text) || 
+                typeof(text) !== typeof(author_id) || 
+                typeof(author_id) !== typeof(id) || 
+                typeof(id) !== 'string'
+            )
         })) return false;
 
         return true;
@@ -33,19 +38,19 @@ class Tweets {
      * 
      * @param {Array} tweets
      */
-    static #cache = (tweets) => localStorage.setItem('tweets', JSON.stringify(tweets))
+    static cache = (tweets) => localStorage.setItem('tweets', JSON.stringify(tweets))
 
     /**
      * Returns an array of tweets which can come from the cache or from the api
      * 
      * @returns {Array}
      */
-    static #getTweets = async () => {
+    static getTweets = async () => {
 
         return new Promise((resolve, reject) => {
 
             // Checks if there are at least one tweet cached, in that case it returns the cached tweets
-            if(Tweets.#areCached() && JSON.parse(localStorage.getItem('tweets')).length > 0) 
+            if(Tweets.areCached() && JSON.parse(localStorage.getItem('tweets')).length > 0) 
                 return resolve({ tweets: JSON.parse(localStorage.getItem('tweets')), source: 'cache' })
     
             // No tweets cached, retrieves them from the api
@@ -70,11 +75,11 @@ class Tweets {
      */
     static pickOne = async () => {
 
-        let tweets = (await Tweets.#getTweets()).tweets
+        let tweets = (await Tweets.getTweets()).tweets
 
         // Takes the tweets and caches the other ones
         let tweet = tweets[0]
-        Tweets.#cache(tweets.slice(1))
+        Tweets.cache(tweets.slice(1))
 
         return tweet
         
