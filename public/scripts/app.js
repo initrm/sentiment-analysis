@@ -245,13 +245,13 @@ const initAutomaticClassification = () => {
 
                 // Sets all the values
                 $('#ac-classifications-container').empty()
-                classifications.forEach((classification) => {
+                classifications.forEach((classification, index) => {
                     let percentage = (classification.value * 100).toFixed(2)
                     $('#ac-classifications-container').append(`
                         <p><small>${classification.label.charAt(0).toUpperCase() + classification.label.slice(1)}</small></p>
                         <div class="mb-3 progress">
                             <div 
-                                id="gt-classification-tweet-percentage" 
+                                id="ac-classification-tweet-percentage-${index}" 
                                 class="progress-bar"
                                 role="progressbar" 
                                 style="width: ${percentage}%;" 
