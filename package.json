@@ -1,6 +1,6 @@
 {
   "name": "sentiment-analysis",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Sentiment Analysis project thorugh a Naive-Bayes Classifier for the \"Web & Mobile Programming\" class exam.",
   "main": "index.js",
   "scripts": {
